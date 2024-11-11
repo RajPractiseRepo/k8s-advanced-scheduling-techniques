@@ -1,0 +1,69 @@
+kubectl taint node i-018107e4b5f29e169 high-cpu=yes:NoSchedule
+kubectl taint node i-0b9b9ac4ff4e06ab6 med-cpu=yes:NoSchedule
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app1
+  labels:
+    app: app1
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: app1
+  template:
+    metadata:
+      labels:
+        app: app1
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+      tolerations:
+        - key: "high-cpu"
+          operator: "Equal"
+          value: "yes"
+          effect: "NoSchedule"
+
+---
+
+
+kubectl taint node i-018107e4b5f29e169 high-cpu=yes:NoExecute
+kubectl taint node i-0b9b9ac4ff4e06ab6 med-cpu=yes:NoExecute
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: app2
+  name: app2
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: app2
+  template:
+    metadata:
+      labels:
+        app: app2
+    spec:
+      containers:
+      - image: nginx:latest
+        name: nginx
+      tolerations:
+      - key: "high-cpu"
+        operator: "Equal"
+        value: "yes"
+        effect: "NoExecute"
+      - key: "med-cpu"
+        operator: "Equal"
+        value: "yes"
+        effect: "NoExecute"
+
+
+
+
+
