@@ -1,0 +1,52 @@
+# kubectl label node i-018107e4b5f29e169 high-perf-cpu=true
+# kubectl label node i-0b9b9ac4ff4e06ab6 low-perf-cpu=true
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: myapp01
+  name: myapp01
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp01
+  template:
+    metadata:
+      labels:
+        app: myapp01
+    spec:
+      containers:
+      - image: rajpractise/kubegame:v2
+        name: kubegame
+      nodeSelector:
+        kubernetes.io/hostname: i-018107e4b5f29e169
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: myapp02
+  name: myapp02
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: myapp02
+  template:
+    metadata:
+      labels:
+        app: myapp02
+    spec:
+      containers:
+      - image: rajpractise/kubegame:v2
+        name: kubegame
+      nodeSelector:
+        low-perf-cpu: "true"
+
+
+
+
+
