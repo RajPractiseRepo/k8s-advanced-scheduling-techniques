@@ -1,0 +1,36 @@
+kubectl label node i-018107e4b5f29e169 env=one
+kubectl label node i-0b9b9ac4ff4e06ab6 env=two
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: required-hard
+  name: required-hard
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      run: required-hard
+  template:
+    metadata:
+      labels:
+        run: required-hard
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: env
+                operator: In
+                values:
+                - one
+                - two
+      containers:
+      - image: nginx:latest
+        name: required-hard
+
+
+
